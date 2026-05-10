@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Triple Crown">
+<meta name="theme-color" content="#0a0a0a">
+<title>The Triple Crown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --paper: #f4f0e8;
+    --paper-warm: #ebe4d4;
+    --crown: #d4a017;
+    --crown-deep: #a67c00;
+    --rust: #c2410c;
+    --leg-1: #1e3a8a;
+    --leg-2: #166534;
+    --leg-3: #0e7490;
+    --line: rgba(10,10,10,0.15);
+    --line-strong: rgba(10,10,10,0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Fraunces', Georgia, serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(212,160,23,0.06), transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(194,65,12,0.05), transparent 40%);
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+  }
+
+  /* Masthead */
+  .masthead {
+    border-top: 4px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    padding: 14px 0 10px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .masthead .vol { font-weight: 700; }
+  .masthead .date { opacity: 0.65; }
+
+  .title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(56px, 14vw, 96px);
+    line-height: 0.85;
+    letter-spacing: -0.01em;
+    margin: 18px 0 8px;
+    text-align: center;
+  }
+  .title .the {
+    display: block;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 0.22em;
+    letter-spacing: 0.3em;
+    margin-bottom: 6px;
+    opacity: 0.7;
+  }
+  .title .crown {
+    color: var(--crown-deep);
+    display: inline-block;
+    transform: translateY(-0.05em);
+  }
+
+  .subtitle {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 28px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* Tab nav */
+  .tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-bottom: 24px;
+    border: 1px solid var(--ink);
+  }
+  .tab {
+    background: transparent;
+    border: none;
+    padding: 14px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab:first-child { border-right: 1px solid var(--ink); }
+  .tab.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  /* Week panel */
+  .week-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .week-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+  .week-range {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 18px;
+  }
+  .week-nav {
+    display: flex;
+    gap: 4px;
+  }
+  .week-nav button {
+    background: transparent;
+    border: 1px solid var(--ink);
+    width: 32px;
+    height: 32px;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+    color: var(--ink);
+    transition: all 0.15s;
+  }
+  .week-nav button:hover { background: var(--ink); color: var(--paper); }
+  .week-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+  .week-nav button:disabled:hover { background: transparent; color: var(--ink); }
+
+  /* Leg cards */
+  .legs {
+    display: grid;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .leg {
+    background: var(--paper-warm);
+    border: 1px solid var(--ink);
+    padding: 18px 20px;
+    position: relative;
+    transition: all 0.25s;
+  }
+  .leg.complete {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .leg-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .leg-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.2em;
+    opacity: 0.6;
+  }
+  .leg-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    margin-top: 2px;
+  }
+  .leg-distance {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    opacity: 0.6;
+    text-transform: uppercase;
+  }
+  .leg-body {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .time-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid currentColor;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    padding: 6px 0;
+    color: inherit;
+    letter-spacing: 0.04em;
+    width: 100%;
+    outline: none;
+  }
+  .leg.complete .time-input { color: var(--paper); }
+  .time-input::placeholder { opacity: 0.35; }
+  .leg input[type="date"] {
+    background: transparent;
+    border: 1px solid currentColor;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 6px 8px;
+    color: inherit;
+    color-scheme: light;
+  }
+  .leg.complete input[type="date"] { color-scheme: dark; }
+  .leg-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .btn {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 8px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-weight: 700;
+  }
+  .btn:hover { background: var(--rust); }
+  .btn-ghost {
+    background: transparent;
+    color: inherit;
+    border: 1px solid currentColor;
+  }
+  .btn-ghost:hover { background: var(--ink); color: var(--paper); }
+  .leg.complete .btn { background: var(--paper); color: var(--ink); }
+  .leg.complete .btn:hover { background: var(--crown); color: var(--ink); }
+
+  /* Crown banner */
+  .crown-banner {
+    border: 2px solid var(--ink);
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 24px;
+    background:
+      repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(212,160,23,0.08) 8px, rgba(212,160,23,0.08) 16px),
+      var(--paper-warm);
+    position: relative;
+  }
+  .crown-banner.awarded {
+    background:
+      repeating-linear-gradient(45deg, var(--crown-deep), var(--crown-deep) 8px, var(--crown) 8px, var(--crown) 16px);
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+  .crown-banner .icon {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .crown-banner .status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    opacity: 0.7;
+  }
+  .crown-banner.awarded .status { opacity: 1; font-weight: 700; }
+  .crown-banner .agg-time {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 12vw, 72px);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+  }
+  .crown-emoji {
+    display: none;
+    font-size: 56px;
+    line-height: 1;
+    margin-top: 14px;
+    filter: drop-shadow(0 2px 0 rgba(10,10,10,0.25));
+  }
+  .crown-banner.awarded .crown-emoji {
+    display: block;
+  }
+  .crown-banner.awarded.celebrate .crown-emoji {
+    animation: crownPop 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) 1;
+  }
+  .crown-banner.awarded.celebrate {
+    animation: bannerPulse 0.6s ease-out 1;
+  }
+  @keyframes crownPop {
+    0%   { transform: scale(0) rotate(-30deg); opacity: 0; }
+    40%  { transform: scale(1.4) rotate(8deg); opacity: 1; }
+    65%  { transform: scale(0.9) rotate(-4deg); }
+    85%  { transform: scale(1.1) rotate(2deg); }
+    100% { transform: scale(1) rotate(0deg); }
+  }
+  @keyframes bannerPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(212,160,23,0.6); }
+    100% { box-shadow: 0 0 0 24px rgba(212,160,23,0); }
+  }
+  .crown-banner .pb-flag {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 10px;
+    background: var(--ink);
+    color: var(--crown);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    font-weight: 700;
+  }
+  .progress-pip {
+    display: inline-flex;
+    gap: 6px;
+    margin-top: 14px;
+  }
+  .pip {
+    width: 10px;
+    height: 10px;
+    border: 1.5px solid var(--ink);
+    border-radius: 50%;
+  }
+  .pip.filled { background: var(--ink); }
+
+  /* Records */
+  .records-empty {
+    text-align: center;
+    padding: 60px 20px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    opacity: 0.5;
+  }
+  .record {
+    border-top: 1px solid var(--ink);
+    padding: 18px 0;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    align-items: start;
+  }
+  .record:last-child { border-bottom: 1px solid var(--ink); }
+  .record-week {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    line-height: 1.1;
+    min-width: 56px;
+  }
+  .record-week .wk-num { font-size: 28px; display: block; }
+  .record-week .wk-yr { opacity: 0.5; font-size: 11px; }
+  .record-body { min-width: 0; }
+  .record-dates {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    opacity: 0.55;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .record-legs {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+  .record-leg {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .record-leg .lbl {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    opacity: 0.5;
+    text-transform: uppercase;
+  }
+  .record-leg .val { font-weight: 500; }
+  .record-leg .val.dnf { opacity: 0.3; font-style: italic; font-weight: 400; }
+  .record-right { text-align: right; }
+  .record-agg {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    line-height: 1;
+    letter-spacing: 0.02em;
+  }
+  .record-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .record-status.crown {
+    color: var(--crown-deep);
+    font-weight: 700;
+  }
+  .record-status.pb {
+    background: var(--ink);
+    color: var(--crown);
+    padding: 2px 6px;
+    display: inline-block;
+    font-weight: 700;
+    margin-left: 6px;
+  }
+  .record-status.dnf-status {
+    opacity: 0.4;
+    font-style: italic;
+  }
+
+  /* Stats strip */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid var(--ink);
+    margin-bottom: 24px;
+  }
+  .stat {
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .stat:not(:last-child) { border-right: 1px solid var(--ink); }
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    opacity: 0.6;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .stat-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  /* Footer */
+  .colophon {
+    margin-top: 50px;
+    padding-top: 18px;
+    border-top: 1px solid var(--ink);
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.4;
+  }
+
+  /* Hidden */
+  .hidden { display: none !important; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 12px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: transform 0.3s;
+    z-index: 100;
+    border: 1px solid var(--crown);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Confirm dialog */
+  .confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,10,10,0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 200;
+  }
+  .confirm-overlay.show { display: flex; }
+  .confirm-box {
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    padding: 24px;
+    max-width: 360px;
+    width: 100%;
+  }
+  .confirm-box h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+  .confirm-box p {
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    margin-bottom: 18px;
+    opacity: 0.8;
+  }
+  .confirm-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <span class="vol">Vol. I — Personal Edition</span>
+    <span class="date" id="todayDate">—</span>
+  </header>
+
+  <h1 class="title">
+    <span class="the">— The —</span>
+    Triple <span class="crown">Crown</span>
+  </h1>
+  <p class="subtitle">5K Treadmill · 5K Parkrun · 1K Pool</p>
+
+  <nav class="tabs">
+    <button class="tab active" data-view="week">This Week</button>
+    <button class="tab" data-view="records">Past Records</button>
+  </nav>
+
+  <!-- WEEK VIEW -->
+  <section id="weekView">
+    <div class="week-header">
+      <div>
+        <div class="week-label">Week</div>
+        <div class="week-range" id="weekRange">—</div>
+      </div>
+      <div class="week-nav">
+        <button id="prevWeek" title="Previous week">←</button>
+        <button id="thisWeek" title="This week">●</button>
+        <button id="nextWeek" title="Next week">→</button>
+      </div>
+    </div>
+
+    <div class="legs">
+      <!-- Leg 1 -->
+      <article class="leg" data-leg="treadmill">
+        <div class="leg-head">
+          <div>
+            <div class="leg-num">First Leg</div>
+            <div class="leg-name">Treadmill</div>
+          </div>
+          <div class="leg-distance">5 km</div>
+        </div>
+        <div class="leg-body">
+          <input type="text" class="time-input" placeholder="MM:SS" inputmode="numeric" data-time>
+          <input type="date" data-date>
+        </div>
+        <div class="leg-actions">
+          <button class="btn" data-save>Log</button>
+          <button class="btn btn-ghost hidden" data-clear>Clear</button>
+        </div>
+      </article>
+
+      <!-- Leg 2 -->
+      <article class="leg" data-leg="parkrun">
+        <div class="leg-head">
+          <div>
+            <div class="leg-num">Second Leg</div>
+            <div class="leg-name">Parkrun</div>
+          </div>
+          <div class="leg-distance">5 km</div>
+        </div>
+        <div class="leg-body">
+          <input type="text" class="time-input" placeholder="MM:SS" inputmode="numeric" data-time>
+          <input type="date" data-date>
+        </div>
+        <div class="leg-actions">
+          <button class="btn" data-save>Log</button>
+          <button class="btn btn-ghost hidden" data-clear>Clear</button>
+        </div>
+      </article>
+
+      <!-- Leg 3 -->
+      <article class="leg" data-leg="swim">
+        <div class="leg-head">
+          <div>
+            <div class="leg-num">Third Leg</div>
+            <div class="leg-name">Pool Swim</div>
+          </div>
+          <div class="leg-distance">1 km</div>
+        </div>
+        <div class="leg-body">
+          <input type="text" class="time-input" placeholder="MM:SS" inputmode="numeric" data-time>
+          <input type="date" data-date>
+        </div>
+        <div class="leg-actions">
+          <button class="btn" data-save>Log</button>
+          <button class="btn btn-ghost hidden" data-clear>Clear</button>
+        </div>
+      </article>
+    </div>
+
+    <div class="crown-banner" id="crownBanner">
+      <div class="status" id="crownStatus">— Awaiting Three Legs —</div>
+      <div class="agg-time" id="crownTime">—:—:—</div>
+      <div class="progress-pip" id="progressPip">
+        <span class="pip"></span>
+        <span class="pip"></span>
+        <span class="pip"></span>
+      </div>
+      <div class="crown-emoji" id="crownEmoji" aria-hidden="true">👑</div>
+    </div>
+
+    <!-- iOS haptic trigger (hidden, triggered programmatically) -->
+    <label aria-hidden="true" style="position:absolute;opacity:0;pointer-events:none;">
+      <input type="checkbox" id="hapticTrigger" switch>
+    </label>
+  </section>
+
+  <!-- RECORDS VIEW -->
+  <section id="recordsView" class="hidden">
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Crowns</div>
+        <div class="stat-val" id="statCrowns">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Best Aggregate</div>
+        <div class="stat-val" id="statPB">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Weeks Logged</div>
+        <div class="stat-val" id="statWeeks">0</div>
+      </div>
+    </div>
+
+    <div id="recordsList"></div>
+  </section>
+
+  <footer class="colophon">
+    Locally Stored · Mon → Sun
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <h3 id="confirmTitle">Confirm</h3>
+    <p id="confirmMsg">Are you sure?</p>
+    <div class="confirm-actions">
+      <button class="btn btn-ghost" id="confirmNo">Cancel</button>
+      <button class="btn" id="confirmYes">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  const STORAGE_KEY = 'tripleCrown.v1';
+  const LEGS = ['treadmill', 'parkrun', 'swim'];
+  const LEG_NAMES = { treadmill: 'Treadmill', parkrun: 'Parkrun', swim: 'Pool Swim' };
+
+  // ---------- State ----------
+  let store = load();
+  let viewWeek = mondayOf(new Date()); // Date object representing Monday of currently-viewed week
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return { weeks: {} };
+      return JSON.parse(raw);
+    } catch (e) {
+      console.error('Load failed', e);
+      return { weeks: {} };
+    }
+  }
+
+  function save() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+    } catch (e) {
+      console.error('Save failed', e);
+      toast('Save failed');
+    }
+  }
+
+  // ---------- Date helpers ----------
+  function mondayOf(d) {
+    const date = new Date(d);
+    date.setHours(0, 0, 0, 0);
+    const day = date.getDay(); // 0=Sun, 1=Mon ... 6=Sat
+    const diff = day === 0 ? -6 : 1 - day;
+    date.setDate(date.getDate() + diff);
+    return date;
+  }
+
+  function sundayOf(monday) {
+    const d = new Date(monday);
+    d.setDate(d.getDate() + 6);
+    return d;
+  }
+
+  function weekKey(monday) {
+    // ISO-ish: YYYY-MM-DD of the Monday
+    const y = monday.getFullYear();
+    const m = String(monday.getMonth() + 1).padStart(2, '0');
+    const d = String(monday.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  function isoWeekNumber(monday) {
+    // Standard ISO week number for the Monday
+    const target = new Date(monday);
+    target.setHours(0, 0, 0, 0);
+    target.setDate(target.getDate() + 3); // Thursday of this week
+    const firstThursday = new Date(target.getFullYear(), 0, 4);
+    const diff = target - firstThursday;
+    const week = 1 + Math.round(diff / (7 * 24 * 3600 * 1000));
+    return { week, year: target.getFullYear() };
+  }
+
+  function fmtDateShort(d) {
+    return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+  }
+
+  function fmtDateFull(d) {
+    return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  function todayISO() {
+    const d = new Date();
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().slice(0, 10);
+  }
+
+  function dateInWeek(isoDate, monday) {
+    const d = new Date(isoDate + 'T00:00:00');
+    const sun = sundayOf(monday);
+    return d >= monday && d <= sun;
+  }
+
+  // ---------- Time helpers ----------
+  function parseTime(input) {
+    // Accept MM:SS, M:SS, MMSS, HH:MM:SS, etc. Returns total seconds or null.
+    if (!input) return null;
+    const s = String(input).trim();
+    if (!s) return null;
+
+    // Handle pure digit input like "2345" → 23:45 or "12345" → 1:23:45
+    if (/^\d+$/.test(s)) {
+      if (s.length <= 2) return parseInt(s, 10); // just seconds
+      if (s.length === 3) return parseInt(s[0], 10) * 60 + parseInt(s.slice(1), 10);
+      if (s.length === 4) return parseInt(s.slice(0, 2), 10) * 60 + parseInt(s.slice(2), 10);
+      if (s.length === 5) {
+        return parseInt(s[0], 10) * 3600 + parseInt(s.slice(1, 3), 10) * 60 + parseInt(s.slice(3), 10);
+      }
+      if (s.length === 6) {
+        return parseInt(s.slice(0, 2), 10) * 3600 + parseInt(s.slice(2, 4), 10) * 60 + parseInt(s.slice(4), 10);
+      }
+      return null;
+    }
+
+    const parts = s.split(':').map(p => p.trim());
+    if (parts.some(p => !/^\d+$/.test(p))) return null;
+    const nums = parts.map(p => parseInt(p, 10));
+
+    if (nums.length === 2) {
+      // MM:SS
+      if (nums[1] >= 60) return null;
+      return nums[0] * 60 + nums[1];
+    }
+    if (nums.length === 3) {
+      // HH:MM:SS
+      if (nums[1] >= 60 || nums[2] >= 60) return null;
+      return nums[0] * 3600 + nums[1] * 60 + nums[2];
+    }
+    return null;
+  }
+
+  function fmtTime(totalSec, opts = {}) {
+    if (totalSec == null || isNaN(totalSec)) return '—';
+    const sec = Math.round(totalSec);
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    const pad = n => String(n).padStart(2, '0');
+    if (h > 0 || opts.forceHours) return `${h}:${pad(m)}:${pad(s)}`;
+    return `${pad(m)}:${pad(s)}`;
+  }
+
+  // ---------- Week data access ----------
+  function getWeek(monday) {
+    const key = weekKey(monday);
+    if (!store.weeks[key]) {
+      store.weeks[key] = { mondayISO: key };
+    }
+    return store.weeks[key];
+  }
+
+  function setLeg(monday, leg, time, dateISO) {
+    const week = getWeek(monday);
+    week[leg] = { time, date: dateISO };
+    save();
+  }
+
+  function clearLeg(monday, leg) {
+    const key = weekKey(monday);
+    if (store.weeks[key]) {
+      delete store.weeks[key][leg];
+      // If week now empty (only mondayISO), remove it
+      const remaining = Object.keys(store.weeks[key]).filter(k => k !== 'mondayISO');
+      if (remaining.length === 0) delete store.weeks[key];
+      save();
+    }
+  }
+
+  function aggregateFor(week) {
+    if (!week) return null;
+    const all = LEGS.map(l => week[l]);
+    if (all.some(x => !x)) return null;
+    return all.reduce((s, x) => s + x.time, 0);
+  }
+
+  function bestAggregate(excludeKey) {
+    let best = null;
+    for (const k of Object.keys(store.weeks)) {
+      if (k === excludeKey) continue;
+      const agg = aggregateFor(store.weeks[k]);
+      if (agg != null && (best == null || agg < best)) best = agg;
+    }
+    return best;
+  }
+
+  // ---------- Haptics & celebration ----------
+  // iOS Safari does not support navigator.vibrate. The "switch" input control
+  // (iOS 17.4+) provides genuine haptic feedback when toggled. We trigger it
+  // programmatically. Falls back to navigator.vibrate on Android.
+  let audioCtx = null;
+  function celebrateCrown() {
+    // 1. Haptic via switch toggle (iOS 17.4+)
+    try {
+      const sw = document.getElementById('hapticTrigger');
+      if (sw) {
+        sw.checked = !sw.checked;
+        sw.dispatchEvent(new Event('change', { bubbles: true }));
+        // Second pulse shortly after for a "ta-da" feel
+        setTimeout(() => {
+          sw.checked = !sw.checked;
+          sw.dispatchEvent(new Event('change', { bubbles: true }));
+        }, 140);
+        setTimeout(() => {
+          sw.checked = !sw.checked;
+          sw.dispatchEvent(new Event('change', { bubbles: true }));
+        }, 320);
+      }
+    } catch (e) { /* no-op */ }
+
+    // 2. navigator.vibrate fallback (Android Chrome, etc.)
+    if (navigator.vibrate) {
+      try { navigator.vibrate([60, 80, 60, 80, 200]); } catch (e) {}
+    }
+
+    // 3. Subtle audio chime as additional feedback (works everywhere)
+    try {
+      if (!audioCtx) {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (Ctx) audioCtx = new Ctx();
+      }
+      if (audioCtx) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const notes = [523.25, 659.25, 783.99]; // C5, E5, G5 — major triad
+        notes.forEach((freq, i) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          const start = audioCtx.currentTime + i * 0.12;
+          gain.gain.setValueAtTime(0, start);
+          gain.gain.linearRampToValueAtTime(0.15, start + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, start + 0.4);
+          osc.connect(gain).connect(audioCtx.destination);
+          osc.start(start);
+          osc.stop(start + 0.45);
+        });
+      }
+    } catch (e) { /* no-op */ }
+
+    // 4. Replay the banner pulse animation
+    const banner = document.getElementById('crownBanner');
+    banner.classList.remove('celebrate');
+    void banner.offsetWidth; // force reflow to restart animation
+    banner.classList.add('celebrate');
+  }
+
+  // Track which weeks have already had their crown ceremony
+  // (so navigating to a past awarded week doesn't re-trigger)
+  const crownedKeys = new Set();
+  // Pre-populate with all already-completed weeks so first render is silent
+  Object.keys(store.weeks).forEach(k => {
+    if (aggregateFor(store.weeks[k]) != null) crownedKeys.add(k);
+  });
+
+  // ---------- Rendering ----------
+  function renderTodayDate() {
+    document.getElementById('todayDate').textContent =
+      new Date().toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase();
+  }
+
+  function renderWeekHeader() {
+    const sun = sundayOf(viewWeek);
+    const range = `${fmtDateShort(viewWeek)} – ${fmtDateShort(sun)}`;
+    document.getElementById('weekRange').textContent = range;
+
+    const thisMonday = mondayOf(new Date());
+    document.getElementById('nextWeek').disabled = viewWeek >= thisMonday;
+  }
+
+  function renderLegs() {
+    const week = store.weeks[weekKey(viewWeek)];
+    document.querySelectorAll('.leg').forEach(el => {
+      const leg = el.dataset.leg;
+      const data = week ? week[leg] : null;
+      const timeInput = el.querySelector('[data-time]');
+      const dateInput = el.querySelector('[data-date]');
+      const saveBtn = el.querySelector('[data-save]');
+      const clearBtn = el.querySelector('[data-clear]');
+
+      if (data) {
+        el.classList.add('complete');
+        timeInput.value = fmtTime(data.time);
+        dateInput.value = data.date;
+        saveBtn.textContent = 'Update';
+        clearBtn.classList.remove('hidden');
+      } else {
+        el.classList.remove('complete');
+        timeInput.value = '';
+        // default date to today if today is in viewWeek, else Monday
+        const today = todayISO();
+        dateInput.value = dateInWeek(today, viewWeek) ? today : weekKey(viewWeek);
+        saveBtn.textContent = 'Log';
+        clearBtn.classList.add('hidden');
+      }
+
+      // Constrain date input to the week
+      dateInput.min = weekKey(viewWeek);
+      dateInput.max = weekKey(sundayOf(viewWeek));
+    });
+  }
+
+  function renderCrown() {
+    const week = store.weeks[weekKey(viewWeek)];
+    const banner = document.getElementById('crownBanner');
+    const statusEl = document.getElementById('crownStatus');
+    const timeEl = document.getElementById('crownTime');
+    const pips = document.getElementById('progressPip');
+
+    const filled = week ? LEGS.filter(l => week[l]).length : 0;
+    pips.innerHTML = LEGS.map((l, i) =>
+      `<span class="pip ${week && week[l] ? 'filled' : ''}"></span>`
+    ).join('');
+
+    // Remove any pre-existing PB flag
+    const existingPB = banner.querySelector('.pb-flag');
+    if (existingPB) existingPB.remove();
+
+    if (filled === 3) {
+      banner.classList.add('awarded');
+      const agg = aggregateFor(week);
+      timeEl.textContent = fmtTime(agg, { forceHours: agg >= 3600 });
+
+      // Check PB
+      const previousBest = bestAggregate(weekKey(viewWeek));
+      const isPB = previousBest == null || agg < previousBest;
+
+      statusEl.innerHTML = isPB ? '★ Triple Crown · Personal Best ★' : '★ Triple Crown Awarded ★';
+      if (isPB && previousBest != null) {
+        const flag = document.createElement('div');
+        flag.className = 'pb-flag';
+        flag.textContent = `−${fmtTime(previousBest - agg)} from previous PB`;
+        banner.appendChild(flag);
+      }
+
+      // Fire celebration only on the transition to crowned
+      const key = weekKey(viewWeek);
+      if (!crownedKeys.has(key)) {
+        crownedKeys.add(key);
+        celebrateCrown();
+      } else {
+        banner.classList.remove('celebrate');
+      }
+    } else {
+      banner.classList.remove('awarded');
+      banner.classList.remove('celebrate');
+      // If user cleared a leg, allow the celebration to fire again next time
+      crownedKeys.delete(weekKey(viewWeek));
+      const remaining = 3 - filled;
+      statusEl.textContent = filled === 0
+        ? '— Awaiting Three Legs —'
+        : `— ${remaining} Leg${remaining > 1 ? 's' : ''} Remaining —`;
+      timeEl.textContent = '—:—:—';
+    }
+  }
+
+  function renderRecords() {
+    const list = document.getElementById('recordsList');
+    const keys = Object.keys(store.weeks).sort().reverse();
+
+    // Stats
+    let crowns = 0;
+    let bestAgg = null;
+    keys.forEach(k => {
+      const agg = aggregateFor(store.weeks[k]);
+      if (agg != null) {
+        crowns++;
+        if (bestAgg == null || agg < bestAgg) bestAgg = agg;
+      }
+    });
+    document.getElementById('statCrowns').textContent = crowns;
+    document.getElementById('statPB').textContent = bestAgg ? fmtTime(bestAgg, { forceHours: bestAgg >= 3600 }) : '—';
+    document.getElementById('statWeeks').textContent = keys.length;
+
+    if (keys.length === 0) {
+      list.innerHTML = '<div class="records-empty">No records yet — log your first leg.</div>';
+      return;
+    }
+
+    list.innerHTML = keys.map(k => {
+      const w = store.weeks[k];
+      const monday = new Date(k + 'T00:00:00');
+      const sun = sundayOf(monday);
+      const { week: wnum, year } = isoWeekNumber(monday);
+
+      const agg = aggregateFor(w);
+      const bestExcluding = bestAggregate(k);
+      const isPB = agg != null && (bestExcluding == null || agg < bestExcluding);
+
+      const legHTML = LEGS.map(leg => {
+        const d = w[leg];
+        return `
+          <div class="record-leg">
+            <span class="lbl">${LEG_NAMES[leg].slice(0, 8)}</span>
+            <span class="val ${d ? '' : 'dnf'}">${d ? fmtTime(d.time) : 'DNF'}</span>
+          </div>
+        `;
+      }).join('');
+
+      let rightHTML;
+      if (agg != null) {
+        rightHTML = `
+          <div class="record-agg">${fmtTime(agg, { forceHours: agg >= 3600 })}</div>
+          <div class="record-status crown">★ Crown${isPB ? '' : ''}</div>
+          ${isPB ? '<div class="record-status pb">PB</div>' : ''}
+        `;
+      } else {
+        const completed = LEGS.filter(l => w[l]).length;
+        rightHTML = `
+          <div class="record-agg" style="opacity:0.3">—</div>
+          <div class="record-status dnf-status">${completed}/3 legs</div>
+        `;
+      }
+
+      return `
+        <div class="record" data-week="${k}">
+          <div class="record-week">
+            <span class="wk-num">W${wnum}</span>
+            <span class="wk-yr">${year}</span>
+          </div>
+          <div class="record-body">
+            <div class="record-dates">${fmtDateFull(monday)} → ${fmtDateShort(sun)}</div>
+            <div class="record-legs">${legHTML}</div>
+          </div>
+          <div class="record-right">${rightHTML}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderAll() {
+    renderTodayDate();
+    renderWeekHeader();
+    renderLegs();
+    renderCrown();
+    renderRecords();
+  }
+
+  // ---------- Event handlers ----------
+  function attachLegHandlers() {
+    document.querySelectorAll('.leg').forEach(el => {
+      const leg = el.dataset.leg;
+      const timeInput = el.querySelector('[data-time]');
+      const dateInput = el.querySelector('[data-date]');
+      const saveBtn = el.querySelector('[data-save]');
+      const clearBtn = el.querySelector('[data-clear]');
+
+      saveBtn.addEventListener('click', () => {
+        const sec = parseTime(timeInput.value);
+        if (sec == null || sec <= 0) {
+          toast('Enter a valid time (MM:SS)');
+          timeInput.focus();
+          return;
+        }
+        let dateVal = dateInput.value;
+        if (!dateVal || !dateInWeek(dateVal, viewWeek)) {
+          toast('Date must be within this week');
+          return;
+        }
+        setLeg(viewWeek, leg, sec, dateVal);
+        toast(`${LEG_NAMES[leg]} logged`);
+        renderAll();
+      });
+
+      clearBtn.addEventListener('click', () => {
+        confirmAction(
+          `Clear ${LEG_NAMES[leg]}?`,
+          `This will remove the ${LEG_NAMES[leg]} time for this week.`,
+          () => {
+            clearLeg(viewWeek, leg);
+            renderAll();
+            toast(`${LEG_NAMES[leg]} cleared`);
+          }
+        );
+      });
+
+      // Auto-format on blur
+      timeInput.addEventListener('blur', () => {
+        const sec = parseTime(timeInput.value);
+        if (sec != null) timeInput.value = fmtTime(sec);
+      });
+    });
+  }
+
+  function attachWeekNav() {
+    document.getElementById('prevWeek').addEventListener('click', () => {
+      const d = new Date(viewWeek);
+      d.setDate(d.getDate() - 7);
+      viewWeek = d;
+      renderAll();
+    });
+    document.getElementById('nextWeek').addEventListener('click', () => {
+      const d = new Date(viewWeek);
+      d.setDate(d.getDate() + 7);
+      const thisMon = mondayOf(new Date());
+      if (d > thisMon) return;
+      viewWeek = d;
+      renderAll();
+    });
+    document.getElementById('thisWeek').addEventListener('click', () => {
+      viewWeek = mondayOf(new Date());
+      renderAll();
+    });
+  }
+
+  function attachTabs() {
+    document.querySelectorAll('.tab').forEach(t => {
+      t.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+        t.classList.add('active');
+        const view = t.dataset.view;
+        document.getElementById('weekView').classList.toggle('hidden', view !== 'week');
+        document.getElementById('recordsView').classList.toggle('hidden', view !== 'records');
+        if (view === 'records') renderRecords();
+      });
+    });
+  }
+
+  // Click on a record to jump back to that week
+  document.addEventListener('click', (e) => {
+    const rec = e.target.closest('.record');
+    if (rec && rec.dataset.week) {
+      viewWeek = new Date(rec.dataset.week + 'T00:00:00');
+      // switch to week tab
+      document.querySelector('.tab[data-view="week"]').click();
+      renderAll();
+    }
+  });
+
+  // ---------- Toast ----------
+  let toastTimer;
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+  }
+
+  // ---------- Confirm dialog ----------
+  function confirmAction(title, msg, onYes) {
+    const overlay = document.getElementById('confirmOverlay');
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmMsg').textContent = msg;
+    overlay.classList.add('show');
+
+    const yes = document.getElementById('confirmYes');
+    const no = document.getElementById('confirmNo');
+
+    const cleanup = () => {
+      overlay.classList.remove('show');
+      yes.removeEventListener('click', yesH);
+      no.removeEventListener('click', noH);
+      overlay.removeEventListener('click', bgH);
+    };
+    const yesH = () => { cleanup(); onYes(); };
+    const noH = () => cleanup();
+    const bgH = (e) => { if (e.target === overlay) cleanup(); };
+
+    yes.addEventListener('click', yesH);
+    no.addEventListener('click', noH);
+    overlay.addEventListener('click', bgH);
+  }
+
+  // ---------- Init ----------
+  attachLegHandlers();
+  attachWeekNav();
+  attachTabs();
+  renderAll();
+
+})();
+</script>
+</body>
+</html>
